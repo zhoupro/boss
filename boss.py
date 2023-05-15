@@ -43,6 +43,16 @@ def insertRow(job_name,company_name,salary,detail_url):
   cursor.execute(sql)
   conn.commit()
 
+def rowExist(detail_url):
+  uniq_url = detail_url.split("?")[0]
+  sqlite_select_query = """SELECT * from jobs where uniq_url = "{}"
+  """
+  cursor.execute(sqlite_select_query.format(uniq_url))
+  records = cursor.fetchall()
+  if len(records) > 0 :
+    return True
+  return False
+
 
 driver = webdriver.Chrome()
 try:
@@ -53,6 +63,7 @@ try:
       )
 
   # 循环查询的职位列表
+  j = 1
   for i in range(1,3):
     url = "https://www.zhipin.com/web/geek/job?query=golang%E4%B8%BB%E7%A8%8B&city=101010100&salary=406&page={}"
     driver.get(url.format(i))
@@ -81,13 +92,21 @@ try:
       jobList.append(curE)
 
     for job in jobList:
-      insertRow(job["job_name"],job["company_name"],job["salary"],job["detail_url"])
+      if rowExist(job["detail_url"]) == False:
+        print("Yes records")
+        j = j + 1
+        insertRow(job["job_name"],job["company_name"],job["salary"],job["detail_url"])
+      else:
+        print("No records")
+
       print("cur {}".format(i))
       print(job["detail_url"])
       print(job["job_name"])
       print(job["company_name"])
       print(job["salary"])
       print("--------------------")
+
+  print("total insert {} records".format(j))
 
 finally:
   driver.quit()
