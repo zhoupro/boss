@@ -44,11 +44,16 @@ try:
     no_chat = []
     for job in result:
       url = job["detail_url"]
+      # print(url)
       driver.get(url)
       WebDriverWait(driver,3000).until(
           EC.presence_of_all_elements_located((By.CLASS_NAME, "job-op"))
           )
       job_op = driver.find_element(By.CLASS_NAME, "job-op")
+      start_chat_list = job_op.find_elements(By.CLASS_NAME,"btn-startchat")
+      if len(start_chat_list) == 0:
+        print("job down")
+        continue
       start_chat = job_op.find_element(By.CLASS_NAME,"btn-startchat")
       if start_chat.text == "立即沟通":
         print("no chat")
