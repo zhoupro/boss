@@ -4,6 +4,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 import sqlite3
 import time
+import datetime
 
 conn = sqlite3.connect("db.sqlite3")
 conn.row_factory = sqlite3.Row
@@ -16,8 +17,9 @@ def batchUpdateJobStatus(status, ids):
     str = "{}{}{}".format(str, id, ",")
   str = str.strip(",")
   str = str + ")"
+  update_time = datetime.datetime.now()
 
-  sql = "update jobs set status = {} where id in {}".format(status, str)
+  sql = """update jobs set status = {}, apply_time = "{}" where id in {}""".format(status,  update_time, str )
   cursor.execute(sql)
   conn.commit()
 
@@ -52,8 +54,19 @@ try:
       job_op = driver.find_element(By.CLASS_NAME, "job-op")
       start_chat_list = job_op.find_elements(By.CLASS_NAME,"btn-startchat")
       if len(start_chat_list) == 0:
+
+        batchUpdateJobStatus(4, [job["id"]])
         print("job down")
         continue
+      active_times = driver.find_elements(By.CLASS_NAME,"boss-active-time")
+      if len(active_times) != 0:
+        active_time = driver.find_element(By.CLASS_NAME,"boss-active-time").text
+        if active_time != "刚刚活跃" and  active_time != "今日活跃"  :
+          batchUpdateJobStatus(5, [job["id"]])
+          print("job expire {}".format(active_time))
+          time.sleep(4)
+          continue
+
       start_chat = job_op.find_element(By.CLASS_NAME,"btn-startchat")
       if start_chat.text == "立即沟通":
         print("no chat")
@@ -61,7 +74,7 @@ try:
       else:
         print("already chat")
         already_chat.append(job["id"])
-      time.sleep(3)
+      time.sleep(4)
 
     print("alread_chat list {}, len {}".format(already_chat, len(already_chat)))
     batchUpdateJobStatus(2, already_chat)

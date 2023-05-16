@@ -30,7 +30,7 @@ cursor.execute("""CREATE INDEX if not exists idx_jobs_uniq_url_status ON jobs (u
 conn.commit()
 
 
-def insertRow(job_name,company_name,salary,detail_url):
+def insertRow(job_name,company_name,salary,detail_url, status=1):
   create_time = datetime.datetime.now()
 
   sqlite_insert_query = """INSERT INTO jobs
@@ -39,7 +39,7 @@ def insertRow(job_name,company_name,salary,detail_url):
                             ("{}","{}","{}","{}","{}",{},"{}");"""
 
   uniq_url = detail_url.split("?")[0]
-  sql = sqlite_insert_query.format(job_name,company_name,salary, detail_url, uniq_url, 1,create_time)
+  sql = sqlite_insert_query.format(job_name,company_name,salary, detail_url, uniq_url, status ,create_time)
   cursor.execute(sql)
   conn.commit()
 
@@ -65,7 +65,7 @@ try:
   # 循环查询的职位列表
   j = 1
   for i in range(1,11):
-    url = "https://www.zhipin.com/web/geek/job?query=golang%E4%B8%BB%E7%A8%8B&city=101010100&salary=406&page={}"
+    url = "https://www.zhipin.com/web/geek/job?query=Golang&city=101010100&scale=302,303,304,305,306&salary=406&page={}"
     driver.get(url.format(i))
     WebDriverWait(driver,3000).until(
         EC.presence_of_all_elements_located((By.CLASS_NAME, "job-card-wrapper"))
