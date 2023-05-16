@@ -93,11 +93,11 @@ try:
 
     for job in jobList:
       if rowExist(job["detail_url"]) == False:
-        print("Yes records")
+        print("No records")
         j = j + 1
         insertRow(job["job_name"],job["company_name"],job["salary"],job["detail_url"])
       else:
-        print("No records")
+        print("exist records")
 
       print("cur {}".format(i))
       print(job["detail_url"])
