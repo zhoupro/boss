@@ -65,7 +65,7 @@ try:
   # 循环查询的职位列表
   j = 1
   for i in range(1,11):
-    url = "https://www.zhipin.com/web/geek/job?query=Golang&city=101010100&scale=302,303,304,305,306&salary=406&page={}"
+    url = "https://www.zhipin.com/web/geek/job?query=golang%E9%AB%98%E7%BA%A7%E5%B7%A5%E7%A8%8B%E5%B8%88&city=101010100&scale=303,304,305,306&page={}"
     driver.get(url.format(i))
     WebDriverWait(driver,3000).until(
         EC.presence_of_all_elements_located((By.CLASS_NAME, "job-card-wrapper"))
