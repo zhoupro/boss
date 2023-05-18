@@ -71,8 +71,10 @@ try:
       if start_chat.text == "立即沟通":
         print("no chat")
         no_chat.append(job["id"])
+        all_no_chat.append(job["id"])
       else:
         print("already chat")
+        all_already_chat.append(job["id"])
         already_chat.append(job["id"])
       time.sleep(4)
 
